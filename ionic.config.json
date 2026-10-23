@@ -1,0 +1,7 @@
+{
+  "name": "lanternquill-temp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
