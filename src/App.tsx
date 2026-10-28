@@ -14,6 +14,7 @@ import { ellipse, square, triangle } from 'ionicons/icons';
 import Tab1 from './pages/Tab1';
 import Tab2 from './pages/Tab2';
 import Tab3 from './pages/Tab3';
+import StoryDetail from './pages/StoryDetail';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -54,6 +55,7 @@ const App: React.FC = () => (
       <IonTabs>
         <IonRouterOutlet>
           <Route path="/tab1" element={<Tab1 />} />
+          <Route path="/tab1/stories/:id" element={<StoryDetail />} />
           <Route path="/tab2" element={<Tab2 />} />
           <Route path="/tab3" element={<Tab3 />} />
           <Route path="/" element={<Navigate to="/tab1" replace />} />

@@ -10,7 +10,7 @@ const StoriesListContainer: React.FC<ContainerProps> = ({ stories }) => {
   return (
     <div className="stories-grid">
       {stories.map((story) => (
-        <IonCard key={story.id} className="story-card" button>
+        <IonCard key={story.id} className="story-card" button routerLink={`/tab1/stories/${story.id}`}>
           <span>{story.title}</span>
         </IonCard>
       ))}
