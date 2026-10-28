@@ -38,7 +38,7 @@ const StoryDetail: React.FC = () => {
       <IonHeader className="ion-no-border">
         <IonToolbar className="detail-toolbar">
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/tab1" text="" />
+            <IonBackButton defaultHref="/stories" text="" />
           </IonButtons>
           <IonButtons slot="end">
             <IonButton aria-label="Plus d'options">

@@ -10,13 +10,13 @@ import {
 } from '@ionic/react';
 import { add } from 'ionicons/icons';
 import { useLiveQuery } from 'dexie-react-hooks';
-import './Tab1.css';
+import './Homepage.css';
 import StoriesListContainer from '../components/StoriesListContainer';
 import { db } from '../db';
 import { useState } from 'react';
 import NewStoryModal from '../components/NewStoryModal';
 
-const Tab1: React.FC = () => {
+const Homepage: React.FC = () => {
   // -> Relit la table à chaque modification de la base
   const stories = useLiveQuery(() => db.stories.orderBy('updatedAt').reverse().toArray()) ?? [];
 
@@ -45,4 +45,4 @@ const Tab1: React.FC = () => {
   );
 };
 
-export default Tab1;
+export default Homepage;
