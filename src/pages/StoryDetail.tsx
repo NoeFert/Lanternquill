@@ -5,14 +5,22 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
   IonPage,
+  IonPopover,
   IonToolbar,
+  useIonAlert,
+  useIonRouter,
 } from '@ionic/react';
-import { add, ellipsisVertical} from 'ionicons/icons';
+import { add, createOutline, ellipsisVertical, trashOutline } from 'ionicons/icons';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './StoryDetail.css';
 import ChaptersListContainer from '../components/ChaptersListContainer';
+import NewStoryModal from '../components/NewStoryModal';
 import { db } from '../db';
 import type { Chapter } from '../models';
 
@@ -33,6 +41,31 @@ const StoryDetail: React.FC = () => {
   const story = useLiveQuery(() => db.stories.get(id), [id]);
   const chapters = mockChapters(id);
 
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [presentAlert] = useIonAlert();
+  const router = useIonRouter();
+
+  const deleteStory = async () => {
+    // Supprime l'histoire et tout ce qui lui est rattaché, en une seule opération
+    await db.transaction('rw', [db.stories, db.chapters, db.trackers], async () => {
+      await db.chapters.where('storyId').equals(id).delete();
+      await db.trackers.where('storyId').equals(id).delete();
+      await db.stories.delete(id);
+    });
+    router.push('/stories', 'back', 'pop');
+  };
+
+  const confirmDelete = () => {
+    presentAlert({
+      header: 'Supprimer cette histoire ?',
+      message: 'Ses chapitres et ses trackers seront aussi supprimés. Cette action est définitive.',
+      buttons: [
+        { text: 'Annuler', role: 'cancel' },
+        { text: 'Supprimer', role: 'destructive', handler: deleteStory },
+      ],
+    });
+  };
+
   return (
     <IonPage>
       <IonHeader className="ion-no-border">
@@ -41,10 +74,23 @@ const StoryDetail: React.FC = () => {
             <IonBackButton defaultHref="/stories" text="" />
           </IonButtons>
           <IonButtons slot="end">
-            <IonButton aria-label="Plus d'options">
+            <IonButton id="story-options" aria-label="Plus d'options">
               <IonIcon slot="icon-only" icon={ellipsisVertical} />
             </IonButton>
           </IonButtons>
+          {/* S'ouvre au clic sur le bouton dont l'id correspond à trigger */}
+          <IonPopover trigger="story-options" dismissOnSelect>
+            <IonList lines="none">
+              <IonItem button detail={false} onClick={() => setIsEditOpen(true)}>
+                <IonIcon slot="start" icon={createOutline} />
+                <IonLabel>Modifier</IonLabel>
+              </IonItem>
+              <IonItem button detail={false} color="danger" onClick={confirmDelete}>
+                <IonIcon slot="start" icon={trashOutline} />
+                <IonLabel>Supprimer</IonLabel>
+              </IonItem>
+            </IonList>
+          </IonPopover>
         </IonToolbar>
       </IonHeader>
 
@@ -60,6 +106,8 @@ const StoryDetail: React.FC = () => {
         </div>
         <ChaptersListContainer chapters={chapters} />
       </IonContent>
+
+      <NewStoryModal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} story={story} />
     </IonPage>
   );
 };

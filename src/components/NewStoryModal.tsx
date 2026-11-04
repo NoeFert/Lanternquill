@@ -11,15 +11,24 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import { db } from '../db';
+import type { Story } from '../models';
 
 interface NewStoryModalProps {
   isOpen: boolean;
   onClose: () => void;
+  // Si une histoire est fournie, la modale passe en mode modification
+  story?: Story;
 }
 
-const NewStoryModal: React.FC<NewStoryModalProps> = ({ isOpen, onClose }) => {
+const NewStoryModal: React.FC<NewStoryModalProps> = ({ isOpen, onClose, story }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+
+  // Pré-remplit les champs juste avant l'ouverture
+  const fill = () => {
+    setTitle(story?.title ?? '');
+    setDescription(story?.description ?? '');
+  };
 
   const close = () => {
     setTitle('');
@@ -29,27 +38,35 @@ const NewStoryModal: React.FC<NewStoryModalProps> = ({ isOpen, onClose }) => {
 
   const save = async () => {
     const now = Date.now();
-    await db.stories.add({
-      id: crypto.randomUUID(),
-      title: title.trim(),
-      description: description.trim(),
-      createdAt: now,
-      updatedAt: now,
-    });
+    if (story) {
+      await db.stories.update(story.id, {
+        title: title.trim(),
+        description: description.trim(),
+        updatedAt: now,
+      });
+    } else {
+      await db.stories.add({
+        id: crypto.randomUUID(),
+        title: title.trim(),
+        description: description.trim(),
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
     close();
   };
 
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={close}>
+    <IonModal isOpen={isOpen} onWillPresent={fill} onDidDismiss={close}>
       <IonHeader className="ion-no-border">
         <IonToolbar>
           <IonButtons slot="start">
             <IonButton onClick={close}>Annuler</IonButton>
           </IonButtons>
-          <IonTitle>Nouvelle histoire</IonTitle>
+          <IonTitle>{story ? "Modifier l'histoire" : 'Nouvelle histoire'}</IonTitle>
           <IonButtons slot="end">
             <IonButton strong onClick={save} disabled={!title.trim()}>
-              Créer
+              {story ? 'Enregistrer' : 'Créer'}
             </IonButton>
           </IonButtons>
         </IonToolbar>
