@@ -28,3 +28,24 @@
 .editor-tools ion-button {
   flex-shrink: 0;
 }
+
+/* Citation / oracle : encadré gris */
+.tiptap blockquote {
+  margin: 16px 0;
+  padding: 12px 16px;
+  background: var(--ion-color-light);
+  border: 1px solid var(--ion-color-medium);
+  border-radius: 4px;
+}
+
+.tiptap blockquote p {
+  margin: 0;
+}
+
+/* Dernière ligne, quand il y en a plusieurs : l'origine de la citation */
+.tiptap blockquote p:last-child:not(:first-child) {
+  margin-top: 8px;
+  text-align: right;
+  font-size: 0.8em;
+  color: var(--ion-color-medium);
+}
