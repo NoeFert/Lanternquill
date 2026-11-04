@@ -1,0 +1,30 @@
+/* Zone d'écriture de Tiptap, sans contour au focus */
+.tiptap {
+  outline: none;
+}
+
+/* Champ de titre qui garde l'apparence du h1 qui l'entoure */
+.chapter-title {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+}
+
+.oracle-row {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 16px;
+}
+
+/* Les outils défilent horizontalement s'ils dépassent la largeur de l'écran */
+.editor-tools {
+  display: flex;
+  overflow-x: auto;
+}
+
+.editor-tools ion-button {
+  flex-shrink: 0;
+}

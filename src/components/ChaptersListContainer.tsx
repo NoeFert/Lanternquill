@@ -16,11 +16,18 @@ const ChaptersListContainer: React.FC<ContainerProps> = ({ chapters }) => {
 
   return (
     <div className="chapters-list">
-      <IonCard className="chapter-card chapter-card-latest" button>
+      <IonCard
+        className="chapter-card chapter-card-latest"
+        routerLink={`/stories/${latest.storyId}/chapters/${latest.id}`}
+      >
         <span>{latest.title}</span>
       </IonCard>
       {older.map((chapter) => (
-        <IonCard key={chapter.id} className="chapter-card" button>
+        <IonCard
+          key={chapter.id}
+          className="chapter-card"
+          routerLink={`/stories/${chapter.storyId}/chapters/${chapter.id}`}
+        >
           <span>{chapter.title}</span>
         </IonCard>
       ))}

@@ -24,26 +24,28 @@ import NewStoryModal from '../components/NewStoryModal';
 import { db } from '../db';
 import type { Chapter } from '../models';
 
-// Chapitres temporaires pour la wireframe, à remplacer par db.chapters
-function mockChapters(storyId: string): Chapter[] {
-  return [1, 2, 3, 4].map((n) => ({
-    id: `${storyId}-${n}`,
-    storyId,
-    title: `Chapter ${n}`,
-    content: '',
-    order: n,
-    updatedAt: 0,
-  }));
-}
-
 const StoryDetail: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
   const story = useLiveQuery(() => db.stories.get(id), [id]);
-  const chapters = mockChapters(id);
+  const chapters = useLiveQuery(() => db.chapters.where('storyId').equals(id).toArray(), [id]) ?? [];
 
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [presentAlert] = useIonAlert();
   const router = useIonRouter();
+
+  const addChapter = async () => {
+    const order = Math.max(0, ...chapters.map((c) => c.order)) + 1;
+    const chapter: Chapter = {
+      id: crypto.randomUUID(),
+      storyId: id,
+      title: `Chapitre ${order}`,
+      content: '',
+      order,
+      updatedAt: Date.now(),
+    };
+    await db.chapters.add(chapter);
+    router.push(`/stories/${id}/chapters/${chapter.id}?edit`);
+  };
 
   const deleteStory = async () => {
     // Supprime l'histoire et tout ce qui lui est rattaché, en une seule opération
@@ -100,7 +102,7 @@ const StoryDetail: React.FC = () => {
 
         <div className="chapters-header">
           <h2>Plus récent</h2>
-          <IonButton fill="clear" aria-label="Nouveau chapitre">
+          <IonButton fill="clear" aria-label="Nouveau chapitre" onClick={addChapter}>
             <IonIcon slot="icon-only" icon={add} />
           </IonButton>
         </div>

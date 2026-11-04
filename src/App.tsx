@@ -5,6 +5,7 @@ import Homepage from './pages/Homepage';
 import Tab2 from './pages/Tab2';
 import Tab3 from './pages/Tab3';
 import StoryDetail from './pages/StoryDetail';
+import ChapterEditor from './pages/ChapterEditor';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -45,6 +46,7 @@ const App: React.FC = () => (
       <IonRouterOutlet>
         <Route path="/stories" element={<Homepage />} />
         <Route path="/stories/:id" element={<StoryDetail />} />
+        <Route path="/stories/:id/chapters/:chapterId" element={<ChapterEditor />} />
         <Route path="/tab2" element={<Tab2 />} />
         <Route path="/tab3" element={<Tab3 />} />
         <Route path="/" element={<Navigate to="/stories" replace />} />
