@@ -21,11 +21,12 @@ export interface OracleEntry {
 }
 
 export const ORACLE_CATEGORIES = [
-  { key: 'inspiration', label: 'Inspiration' },
-  { key: 'questions', label: 'Questions' },
-  { key: 'characters', label: 'Personnages' },
-  { key: 'locations', label: 'Lieux' },
+  { key: 'basic', label: 'Basique' },
+  { key: 'storyline', label: 'Arc narratif' },
   { key: 'world', label: 'Monde' },
+  { key: 'characters', label: 'Personnages' },
+  { key: 'event', label: 'Événements' },
+  { key: 'inspiration', label: 'Inspiration' },
 ] as const;
 export type OracleCategory = (typeof ORACLE_CATEGORIES)[number]['key'];
 
@@ -34,6 +35,7 @@ export interface Oracle {
   name: string;
   category: OracleCategory;
   entries: OracleEntry[];
+  order: number;
 }
 
 export interface Favorite {
