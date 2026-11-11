@@ -49,16 +49,20 @@ const ChapterEditor: React.FC = () => {
     [chapter?.id, isEditing]
   );
 
-  // Insère une citation, avec l'origine en dernière ligne si elle est fournie
+  // Insère une citation, avec l'origine en dernière ligne si elle est fournie,
+  // suivie d'un paragraphe vide pour que le curseur sorte de la citation
   const insertOracle = (text: string, source?: string) => {
     const lines = source ? [text, source] : [text];
     editor
       .chain()
       .focus()
-      .insertContent({
-        type: 'blockquote',
-        content: lines.map((line) => ({ type: 'paragraph', content: [{ type: 'text', text: line }] })),
-      })
+      .insertContent([
+        {
+          type: 'blockquote',
+          content: lines.map((line) => ({ type: 'paragraph', content: [{ type: 'text', text: line }] })),
+        },
+        { type: 'paragraph' },
+      ])
       .run();
   };
 
