@@ -9,6 +9,7 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonMenuToggle,
   IonPage,
   IonPopover,
   IonToolbar,
@@ -22,6 +23,7 @@ import { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import './ChapterEditor.css';
 import { db } from '../db';
+import OraclesMenu from '../components/OraclesMenu';
 
 const ChapterEditor: React.FC = () => {
   const { id = '', chapterId = '' } = useParams<{ id: string; chapterId: string }>();
@@ -47,6 +49,19 @@ const ChapterEditor: React.FC = () => {
     [chapter?.id, isEditing]
   );
 
+  // Insère une citation, avec l'origine en dernière ligne si elle est fournie
+  const insertOracle = (text: string, source?: string) => {
+    const lines = source ? [text, source] : [text];
+    editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: 'blockquote',
+        content: lines.map((line) => ({ type: 'paragraph', content: [{ type: 'text', text: line }] })),
+      })
+      .run();
+  };
+
   const tools = [
     { label: 'Titre 1', content: 'H1', run: () => editor.chain().focus().toggleHeading({ level: 1 }).run() },
     { label: 'Titre 2', content: 'H2', run: () => editor.chain().focus().toggleHeading({ level: 2 }).run() },
@@ -61,6 +76,11 @@ const ChapterEditor: React.FC = () => {
 
   return (
     <IonPage>
+      {/* Insertion possible uniquement en mode édition */}
+      <OraclesMenu
+        contentId="chapter-content"
+        onInsert={isEditing ? insertOracle : undefined}
+      />
       <IonHeader className="ion-no-border">
         <IonToolbar>
           <IonButtons slot="start">
@@ -84,29 +104,33 @@ const ChapterEditor: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      {chapter && (
-        <IonContent className="ion-padding">
-          {isEditing ? (
-            <h1>
-              <input
-                className="chapter-title"
-                defaultValue={chapter.title}
-                placeholder="Sans titre"
-                onChange={(e) => db.chapters.update(chapterId, { title: e.target.value })}
-              />
-            </h1>
-          ) : (
-            <h1>{chapter.title}</h1>
-          )}
-          <EditorContent editor={editor} />
-        </IonContent>
-      )}
+      {/* Toujours affiché : le menu des oracles a besoin de le trouver dès son ouverture */}
+      <IonContent id="chapter-content" className="ion-padding">
+        {chapter && (
+          <>
+            {isEditing ? (
+              <h1>
+                <input
+                  className="chapter-title"
+                  defaultValue={chapter.title}
+                  placeholder="Sans titre"
+                  onChange={(e) => db.chapters.update(chapterId, { title: e.target.value })}
+                />
+              </h1>
+            ) : (
+              <h1>{chapter.title}</h1>
+            )}
+            <EditorContent editor={editor} />
+          </>
+        )}
+      </IonContent>
 
       {isEditing && (
         <IonFooter className="ion-no-border">
           <div className="oracle-row">
-            {/* Pas encore relié aux oracles */}
-            <IonButton>Demander à l'oracle</IonButton>
+            <IonMenuToggle menu="oracles" autoHide={false}>
+              <IonButton>Demander à l'oracle</IonButton>
+            </IonMenuToggle>
           </div>
           <div className="editor-tools">
             {tools.map((tool) => (
