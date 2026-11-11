@@ -1,0 +1,9 @@
+/* Entrées sur fond gris */
+.oracle-entries {
+  background: var(--ion-color-light);
+}
+
+.oracle-entries ion-item {
+  --background: var(--ion-color-light);
+  --min-height: 32px;
+}

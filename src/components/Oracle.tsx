@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { IonButton, IonIcon, IonInput, IonItem, IonLabel, IonList, IonText } from '@ionic/react';
-import { chevronDown, chevronUp, dice } from 'ionicons/icons';
+import { IonButton, IonCol, IonIcon, IonInput, IonItem, IonLabel, IonList, IonRow, IonText } from '@ionic/react';
+import { arrowForward, book, chevronDown, chevronUp, dice } from 'ionicons/icons';
 import type { Oracle as OracleModel } from '../models';
+import './Oracle.css';
 
 interface ContainerProps {
   oracle: OracleModel;
@@ -27,22 +28,31 @@ const Oracle: React.FC<ContainerProps> = ({ oracle, onInsert }) => {
         Voir tout <IonIcon icon={expanded ? chevronUp : chevronDown} />
       </IonText>
       {expanded && (
-        <IonList>
+        <IonList className="oracle-entries">
           {oracle.entries.map((entry) => (
-            <IonItem key={entry.text}>
+            <IonItem key={entry.text} lines="none">
               <IonLabel>{entry.text}</IonLabel>
             </IonItem>
           ))}
         </IonList>
       )}
-      <IonItem lines="none">
-        <IonButton slot="start" onClick={() => setResult(rollOracle(oracle))}>
-          {result ? 'Relancer' : 'Lancer'}
-          <IonIcon slot="end" icon={dice} />
-        </IonButton>
-        <IonInput value={result} readonly />
-      </IonItem>
-      {result && onInsert && <IonButton onClick={() => onInsert(result, oracle.name)}>Insérer</IonButton>}
+      {result && <IonInput value={result} readonly fill="outline" />}
+      <IonRow>
+        {result && onInsert && (
+          <IonCol>
+            <IonButton expand="block" aria-label="Insérer" onClick={() => onInsert(result, oracle.name)}>
+              <IonIcon icon={arrowForward} />
+              <IonIcon icon={book} />
+            </IonButton>
+          </IonCol>
+        )}
+        <IonCol>
+          <IonButton expand="block" onClick={() => setResult(rollOracle(oracle))}>
+            {result ? 'Relancer' : 'Lancer'}
+            <IonIcon slot="end" icon={dice} />
+          </IonButton>
+        </IonCol>
+      </IonRow>
     </div>
   );
 };
